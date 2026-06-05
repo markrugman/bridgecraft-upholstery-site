@@ -58,6 +58,12 @@ assert.match(contactHandler, /filter_var\(\$email,\s*FILTER_VALIDATE_EMAIL\)/, '
 assert.match(contactHandler, /mail\(/, 'PHP handler should use server-side mail sending');
 assert.match(contactHandler, /header\('Location: thank-you\.html'\)/, 'PHP handler should redirect to thank you page after sending');
 
+assert.ok(existsSync(path.join(root, '.htaccess')), 'Apache .htaccess should exist');
+const htaccess = read('.htaccess');
+assert.match(htaccess, /RewriteCond %\{HTTPS\} !=on/, '.htaccess should detect non-HTTPS requests');
+assert.match(htaccess, /RewriteRule \^\(\.\*\)\$ https:\/\/%\{HTTP_HOST\}%\{REQUEST_URI\}/, '.htaccess should force HTTPS');
+assert.match(htaccess, /!\^\/\\.well-known\/acme-challenge\//, '.htaccess should allow AutoSSL ACME challenge files over HTTP');
+
 assert.ok(existsSync(path.join(root, 'assets/css/styles.css')), 'CSS file should exist');
 assert.ok(existsSync(path.join(root, 'assets/js/main.js')), 'JS file should exist');
 assert.ok(existsSync(path.join(root, 'assets/images')), 'images directory should exist');

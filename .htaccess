@@ -4,6 +4,11 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # Force HTTPS without blocking AutoSSL HTTP validation.
+  RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
   # Redirect common WordPress-era paths to the new static pages.
   RewriteRule ^home/?$ index.html [R=301,L]
   RewriteRule ^about-us/?$ about.html [R=301,L]

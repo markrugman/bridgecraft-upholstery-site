@@ -48,6 +48,15 @@ for (const detail of requiredContact) {
 assert.match(contact, /name="name"/, 'contact form should include name field');
 assert.match(contact, /name="email"/, 'contact form should include email field');
 assert.match(contact, /name="message"/, 'contact form should include message field');
+assert.match(contact, /action="contact-submit\.php"/, 'contact form should post to PHP mail handler');
+assert.doesNotMatch(contact, /data-netlify|mailto:/i, 'contact form should not depend on Netlify or mailto');
+
+assert.ok(existsSync(path.join(root, 'contact-submit.php')), 'PHP contact handler should exist');
+const contactHandler = read('contact-submit.php');
+assert.match(contactHandler, /info@bridgecraftupholstery\.co\.uk/, 'PHP handler should send to Bridgecraft email');
+assert.match(contactHandler, /filter_var\(\$email,\s*FILTER_VALIDATE_EMAIL\)/, 'PHP handler should validate email addresses');
+assert.match(contactHandler, /mail\(/, 'PHP handler should use server-side mail sending');
+assert.match(contactHandler, /header\('Location: thank-you\.html'\)/, 'PHP handler should redirect to thank you page after sending');
 
 assert.ok(existsSync(path.join(root, 'assets/css/styles.css')), 'CSS file should exist');
 assert.ok(existsSync(path.join(root, 'assets/js/main.js')), 'JS file should exist');

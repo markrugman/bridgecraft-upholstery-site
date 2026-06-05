@@ -71,6 +71,16 @@ const contactForm = document.querySelector('[data-contact-form]');
 const formStatus = document.querySelector('[data-form-status]');
 
 if (contactForm && formStatus) {
+  const status = new URLSearchParams(window.location.search).get('status');
+
+  if (status === 'error') {
+    formStatus.textContent = 'Please check your name, email, and query before submitting.';
+  }
+
+  if (status === 'send-error') {
+    formStatus.textContent = 'Sorry, the enquiry could not be sent. Please call 01332 493514.';
+  }
+
   contactForm.addEventListener('submit', (event) => {
     const form = event.currentTarget;
     const name = form.elements.name.value.trim();

@@ -1,0 +1,17 @@
+DirectoryIndex index.html
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Redirect common WordPress-era paths to the new static pages.
+  RewriteRule ^home/?$ index.html [R=301,L]
+  RewriteRule ^about-us/?$ about.html [R=301,L]
+  RewriteRule ^contact-us/?$ contact.html [R=301,L]
+  RewriteRule ^category/catalogue/?$ gallery.html [R=301,L]
+  RewriteRule ^category/catalogue/(.*)$ gallery.html [R=301,L]
+
+  # Allow clean URLs such as /gallery, /about, and /contact.
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+</IfModule>

@@ -3,8 +3,9 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 
 const root = process.cwd();
-const pages = ['index.html', 'gallery.html', 'about.html', 'contact.html'];
-const requiredContact = ['01332 493514', '139A London Rd', 'Shardlow', 'Derby DE72 2HA'];
+const pages = ['index.html', 'gallery.html', 'about.html', 'contact.html', 'thank-you.html'];
+const requiredContact = ['01332 493514', 'Unit 4 the old dairy', 'Meadow Lane industrial estate', 'Meadow lane', 'Long Eaton', 'NG10 2FE'];
+const retiredLocationText = [/139A London Rd/i, /Shardlow/i, /Derby DE72 2HA/i];
 
 function read(file) {
   return readFileSync(path.join(root, file), 'utf8');
@@ -21,6 +22,9 @@ for (const page of pages) {
   assert.match(html, /href="contact\.html"/, `${page} should link contact`);
   assert.match(html, /assets\/css\/styles\.css/, `${page} should load shared CSS`);
   assert.match(html, /assets\/js\/main\.js/, `${page} should load shared JS`);
+  for (const retiredText of retiredLocationText) {
+    assert.doesNotMatch(html, retiredText, `${page} should not reference the old Shardlow address`);
+  }
 }
 
 const home = read('index.html');
@@ -45,6 +49,7 @@ const contact = read('contact.html');
 for (const detail of requiredContact) {
   assert.match(contact, new RegExp(detail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), `contact should include ${detail}`);
 }
+assert.match(contact, /Meadow%20Lane%20industrial%20estate/i, 'contact map link should use updated address query');
 assert.match(contact, /name="name"/, 'contact form should include name field');
 assert.match(contact, /name="email"/, 'contact form should include email field');
 assert.match(contact, /name="message"/, 'contact form should include message field');
